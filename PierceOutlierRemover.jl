@@ -2,7 +2,8 @@ using CSV, DataFrames, Statistics, XLSX
 
 ptable = CSV.read("Peirces Table.csv", DataFrame)
 
-raw_export = CSV.read("data.csv", DataFrame)
+# Load your data
+raw_export = CSV.read("data.csv", DataFrame) # Replace "data.csv" with the path of your data csv file.
 
 df = DataFrame(
     Sample = raw_export[:, "Easotope Name"], d13C = raw_export[:, "d13C VPDB (Final)"], d18O = raw_export[:, "d18O VPDB (Final)"], D47 = raw_export[:, "D47 CDES (Final)"], 
