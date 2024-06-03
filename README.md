@@ -1,1 +1,1 @@
-# Pierce-s-Criterion-for-Clumped-Data
+# Pierce's criterion for clumped data
