@@ -1,6 +1,6 @@
 using CSV, DataFrames, Statistics, XLSX
 
-ptable = CSV.read("Peirces Table.csv", DataFrame)
+ptable = CSV.read("Pierces Table.csv", DataFrame)
 
 # Load your data
 raw_export = CSV.read("data.csv", DataFrame) # Replace "data.csv" with the path of your data csv file.
