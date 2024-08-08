@@ -1,6 +1,6 @@
 using CSV, DataFrames, Statistics, XLSX
 
-ptable = CSV.read("Pierces Table.csv", DataFrame)
+ptable = CSV.read("Peirces Table.csv", DataFrame)
 
 # Load your data
 raw_export = CSV.read("data.csv", DataFrame) # Replace "data.csv" with the path of your data csv file.
@@ -19,7 +19,7 @@ vdf = [DataFrame(gdf[i]) for i in 1:L]
 
 summary = DataFrame(Sample = [vdf[i][1, "Sample"] for i in 1 : L], n = 0, d13C = 0.0, d13C_SE = 0.0, d18O = 0.0, d18O_SE = 0.0, D47 = 0.0, D47_SE = 0.0)
 
-function PierceOutlierDetect(Obs::Vector{Float64}, Outl::Vector{Int64}, d::Int64)
+function PeirceOutlierDetect(Obs::Vector{Float64}, Outl::Vector{Int64}, d::Int64)
     n = length(Obs)
     Obs_mean = round(mean(Obs), digits = d)
     Obs_SD = round(std(Obs), digits = d + 1)
@@ -42,9 +42,9 @@ function PierceOutlierDetect(Obs::Vector{Float64}, Outl::Vector{Int64}, d::Int64
 end
 
 for k in 1 : L
-    PierceOutlierDetect(vdf[k][!, "d13C"], vdf[k][!, "d13C_Outlier"], 2)
-    PierceOutlierDetect(vdf[k][!, "d18O"], vdf[k][!, "d18O_Outlier"], 2)
-    PierceOutlierDetect(vdf[k][!, "D47"], vdf[k][!, "D47_Outlier"], 3)
+    PeirceOutlierDetect(vdf[k][!, "d13C"], vdf[k][!, "d13C_Outlier"], 2)
+    PeirceOutlierDetect(vdf[k][!, "d18O"], vdf[k][!, "d18O_Outlier"], 2)
+    PeirceOutlierDetect(vdf[k][!, "D47"], vdf[k][!, "D47_Outlier"], 3)
     vdf[k][!, "Total_Outlier"] = (vdf[k][!, "d13C_Outlier"] .+ vdf[k][!, "d18O_Outlier"] .+ vdf[k][!, "D47_Outlier"])
     temp_v = filter(row -> row["Total_Outlier"] < 1, vdf[k])
     m = nrow(temp_v)
