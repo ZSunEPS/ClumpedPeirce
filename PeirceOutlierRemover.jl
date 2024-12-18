@@ -13,7 +13,7 @@ df = DataFrame(
     d18O_Outlier = 0, 
     D47_Outlier = 0, 
     Total_Outlier = 0
-) # Create a dataframe for data to be evaluted and outlier indicators.
+) # Create a DataFrame with desired columns and initialize outlier indicators
 dropmissing!(df) # Drop rows withing Missing data.
 
 gdf = groupby(df, "Sample") # Group data by "Sample".
@@ -45,13 +45,12 @@ function PeirceOutlierDetect(Obs, Outl, Table::DataFrame, d::Int64)
      NewOutlierDetected = 0
      Step = 0
     while NewOutlierDetected > LastOutlierDetected
-         LastOutlierDetected = NewOutlierDetected
-         Step += 1
+        LastOutlierDetected = NewOutlierDetected
+        Step += 1
         R = Table[n - 2, Step]
         Obs_MaxDeviation  = round(Obs_SD * R, digits = d + 1)
-    
         Outl .= Obs_Deviation .> Obs_MaxDeviation # Mark outliers
-         NewOutlierDetected = sum(Outl)
+        NewOutlierDetected = sum(Outl)
     end
 end
 
