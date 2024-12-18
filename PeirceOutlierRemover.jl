@@ -2,7 +2,7 @@ using CSV, DataFrames, Statistics, XLSX
 
 peircesTable = CSV.read("Peirces Table.csv", DataFrame) # Load Peirce's Criterion Table
 
-rawExport = CSV.read("data.csv", DataFrame) # Read data exported from Easotope. Replace "data.csv" with the path of your .csv file.
+rawExport = CSV.read("Data.csv", DataFrame) # Read data exported from Easotope. Replace "data.csv" with the path of your .csv file.
 
 df = DataFrame(
     Sample = rawExport[:, "Easotope Name"], 
@@ -54,7 +54,6 @@ function PeirceOutlierDetect(Obs, Outl, Table::DataFrame, d::Int64)
     end
 end
 
-
 for k in 1 : L # Process data per group (or sample)
     PeirceOutlierDetect(vdf[k][!, "d13C"], vdf[k][!, "d13C_Outlier"], peircesTable, 2)
     PeirceOutlierDetect(vdf[k][!, "d18O"], vdf[k][!, "d18O_Outlier"], peircesTable, 2)
@@ -90,4 +89,4 @@ summary[:, "d18Ow (VSMOW)"] = round.(summary[:, "d18Ow (VSMOW)"], digits = 2)
 
 dfFinal = reduce(vcat, vdf) # Concatenate groups back together
 
-XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
+#XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
