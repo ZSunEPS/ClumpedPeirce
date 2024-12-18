@@ -89,4 +89,4 @@ summary[:, "d18Ow (VSMOW)"] = round.(summary[:, "d18Ow (VSMOW)"], digits = 2)
 
 dfFinal = reduce(vcat, vdf) # Concatenate groups back together
 
-#XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
+XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
