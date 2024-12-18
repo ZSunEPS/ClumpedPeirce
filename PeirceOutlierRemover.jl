@@ -17,9 +17,9 @@ df = DataFrame(
 dropmissing!(df) # Drop rows withing Missing data.
 
 gdf = groupby(df, "Sample") # Group data by "Sample".
-vdf = collect(gdf)
+vdf = collect(gdf) # A vector of subdataframes.
 
-L = length(vdf)
+L = length(vdf) # Count samples.
 summary = DataFrame(
     Sample = [g[1, "Sample"] for g in vdf], 
     n = 0, 
@@ -85,7 +85,7 @@ summary[:, "Temperature_SE"] = Int64.(round.(summary[:, "Temperature_SE"], digit
 
 summary[:, "d18Oc (VSMOW)"] = round.(summary[!, "d18O"] .* 1.03091 .+ 30.91, digits = 2)
 
-# The δ18O fractionation equation is from kim and O'Niel (1997).
+# The δ18O fractionation equation is from kim and O'Neil (1997).
 summary[:, "d18Ow (VSMOW)"] = (1000 .+ summary[:, "d18Oc (VSMOW)"]) ./ (exp.((18030 ./ (summary[:, "Temperature"] .+ 273.15) .- 32.42) ./ 1000)) .- 1000
 summary[:, "d18Ow (VSMOW)"] = round.(summary[:, "d18Ow (VSMOW)"], digits = 2)
 
