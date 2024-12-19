@@ -1,7 +1,6 @@
 using CSV, DataFrames, Statistics, XLSX
 
 peircesTable = CSV.read("Peirces Table.csv", DataFrame) # Load Peirce's Criterion Table
-
 rawExport = CSV.read("Data.csv", DataFrame) # Read data exported from Easotope. Replace "data.csv" with the path of your .csv file.
 
 df = DataFrame(
@@ -14,12 +13,11 @@ df = DataFrame(
     D47_Outlier = 0, 
     Total_Outlier = 0
 ) # Create a DataFrame with desired columns and initialize outlier indicators
-dropmissing!(df) # Drop rows withing Missing data.
+dropmissing!(df) # Drop rows containing Missing data.
 
-gdf = groupby(df, "Sample") # Group data by "Sample".
-vdf = collect(gdf) # A vector of subdataframes.
+gdf = groupby(df, "Sample") # Group data by "Sample"
+vdf = collect(gdf) # A vector of subdataframes
 
-L = length(vdf) # Count samples.
 summary = DataFrame(
     Sample = [g[1, "Sample"] for g in vdf], 
     n = 0, 
@@ -29,7 +27,7 @@ summary = DataFrame(
     d18O_SE = 0.0, 
     D47 = 0.0, 
     D47_SE = 0.0
-) # Create a summary for evaluated data.
+) # Create a summary table for the evaluated data
 
 # Function to perform Peirce's outlier detection
 function PeirceOutlierDetect(Obs, Outl, Table::DataFrame, d::Int64)
@@ -54,6 +52,7 @@ function PeirceOutlierDetect(Obs, Outl, Table::DataFrame, d::Int64)
     end
 end
 
+L = length(vdf) # Count samples
 for k in 1 : L # Process data per group (or sample)
     PeirceOutlierDetect(vdf[k][!, "d13C"], vdf[k][!, "d13C_Outlier"], peircesTable, 2)
     PeirceOutlierDetect(vdf[k][!, "d18O"], vdf[k][!, "d18O_Outlier"], peircesTable, 2)
@@ -64,7 +63,6 @@ for k in 1 : L # Process data per group (or sample)
     
     # Filter non-outliers and calculate statistics
     cleanData = filter(row -> row["Total_Outlier"] == 0, vdf[k])
-
     m = nrow(cleanData)
     summary[k, "n"] = m
     summary[k, "d13C"] = round(mean(cleanData[!, "d13C"]), digits = 2)
@@ -75,18 +73,24 @@ for k in 1 : L # Process data per group (or sample)
     summary[k, "D47_SE"] = round(std(cleanData[!, "D47"]) / sqrt(m), digits = 3)
 end
 
-# The Δ47-Temperature equation is from Anderson et al. (2021).
-summary[:, "Temperature"] = sqrt.((0.0391 * 10^6) ./ (summary[!, "D47"] .- 0.154)) .- 273.15
-summary[:, "Temperature_SE"] = abs.(sqrt(0.0391) .* 10^3 .* (-1/2) .* (summary[!, "D47"] .- 0.154).^(-3/2) .* summary[!, "D47_SE"])
-summary[:, "Temperature"] = Int64.(round.(summary[:, "Temperature"], digits = 0))
-summary[:, "Temperature_SE"] = Int64.(round.(summary[:, "Temperature_SE"], digits = 0))
+# The Δ47-Temperature equation is from Anderson et al. (2021)
+function Ae21Temperarure(D)
+    return sqrt(0.0391 * 10^6 / (D - 0.154)) - 273.15
+end
+function Ae21TemperarureSE(D, DSE)
+    return abs(sqrt(0.0391) * 10^3 * (-1/2) * (D - 0.154)^(-3/2) * DSE)
+end
+summary[:, "Temperature"] = Int64.(round.(Ae21Temperarure.(summary[!, "D47"]), digits  = 0))
+summary[:, "Temperature_SE"] = Int64.(round.(Ae21TemperarureSE.(summary[!, "D47"], summary[!, "D47_SE"]), digits = 0))
 
-summary[:, "d18Oc (VSMOW)"] = round.(summary[!, "d18O"] .* 1.03091 .+ 30.91, digits = 2)
+summary[:, "d18Oc (VSMOW)"] = round.(summary[!, "d18O"] .* 1.03091 .+ 30.91, digits = 2) # Convert VPDB to VSMOW
 
-# The δ18O fractionation equation is from kim and O'Neil (1997).
-summary[:, "d18Ow (VSMOW)"] = (1000 .+ summary[:, "d18Oc (VSMOW)"]) ./ (exp.((18030 ./ (summary[:, "Temperature"] .+ 273.15) .- 32.42) ./ 1000)) .- 1000
-summary[:, "d18Ow (VSMOW)"] = round.(summary[:, "d18Ow (VSMOW)"], digits = 2)
+# The δ18O fractionation equation is from kim and O'Neil (1997)
+function WaterOxygenIsotopicComposition(d18Ocarb, T)
+    return (1000 + d18Ocarb) / (exp((18030 / (T + 273.15) - 32.42) / 1000)) - 1000
+end
+summary[:, "d18Ow (VSMOW)"] = round.(WaterOxygenIsotopicComposition.(summary[:, "d18Oc (VSMOW)"], summary[:, "Temperature"]), digits = 2)
 
 dfFinal = reduce(vcat, vdf) # Concatenate groups back together
 
-XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
+#XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
