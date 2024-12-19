@@ -105,6 +105,6 @@ summary["d18Ow (VSMOW)"] = np.round(WaterOxygenIsotopicComposition(summary["d18O
 dfFinal = pd.concat([group for group in vdf])
 
 # Write to Excel file
-#with pd.ExcelWriter("Report.xlsx") as writer:
-#    dfFinal.to_excel(writer, sheet_name="Evaluation", index=False)
-#    summary.to_excel(writer, sheet_name="Summary", index=False)
+with pd.ExcelWriter("Report.xlsx") as writer:
+    dfFinal.to_excel(writer, sheet_name="Evaluation", index=False)
+    summary.to_excel(writer, sheet_name="Summary", index=False)
