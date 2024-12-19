@@ -1,4 +1,4 @@
-# If the required packages are not installed, delete the "#" markers in the following two lines to install packages.
+# If the required packages are not installed, uncomment following two lines to install packages.
 # using Pkg
 # Pkg.add(["CSV", "DataFrames", "Statistics", "XLSX"])
 
