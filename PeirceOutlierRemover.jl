@@ -97,4 +97,4 @@ summary[:, "d18Ow (VSMOW)"] = round.(WaterOxygenIsotopicComposition.(summary[:, 
 
 dfFinal = reduce(vcat, vdf) # Concatenate groups back together
 
-#XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
+XLSX.writetable("Report.xlsx", "Evaluation" => dfFinal, "Summary" => summary)
