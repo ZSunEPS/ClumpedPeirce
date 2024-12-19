@@ -1,6 +1,7 @@
 # Peirce's criterion for clumped data
 
 Required Julia packages: CSV, DataFrames, XLSX
+
 Required Python packages: pandas numpy openpyxl
 
 Usage: 
