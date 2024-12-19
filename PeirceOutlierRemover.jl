@@ -1,5 +1,7 @@
-using Pkg
-Pkg.add(["CSV", "DataFrames", "Statistics", "XLSX"])
+# If the required packages are not installed, 
+# using Pkg
+# Pkg.add(["CSV", "DataFrames", "Statistics", "XLSX"])
+
 using CSV, DataFrames, Statistics, XLSX
 
 peircesTable = CSV.read("Peirces Table.csv", DataFrame) # Load Peirce's Criterion Table
