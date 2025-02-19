@@ -2,7 +2,7 @@
 
 Required Julia packages: CSV, DataFrames, XLSX
 
-Required Python packages: pandas numpy openpyxl
+Required Python packages: pandas, numpy, openpyxl
 
 Usage: 
 1. Export data from Easotope and save data as .csv files.
